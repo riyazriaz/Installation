@@ -1,0 +1,23 @@
+Prerequisites:
+--------------
+install jdk
+
+Eclipse-maven Integration:
+---------------------------
+
+->help
+	->Install New Software
+		
+
+give the link given below:
+
+http://download.eclipse.org/technology/m2e/releases
+
+->select all
+->finish
+
+create one HelloWorld sample program:
+
+right click on the project 
+			->RunAs
+				->Maven Install 
