@@ -1,0 +1,90 @@
+1:Manual-Maven-Dependency
+------------------
+
+#su maven
+#cd /opt/maven
+#mkdir hello
+#cd hello
+#mkdir -p src/main/java/hello
+#cd src/main/java/hello
+#vi HelloWorld.java
+----------------------	
+	package hello;
+
+	import org.joda.time.LocalTime;
+	public class HelloWorld {
+	        public static void main(String[] args) {
+	                LocalTime currentTime = new LocalTime();
+	                System.out.println("The current local time is: " + currentTime);
+	                Greeter greeter = new Greeter();
+	                System.out.println(greeter.sayHello());
+	        }
+	}
+
+------------------------
+#vi Greeter.java
+----------------------
+
+	package hello;
+	
+	public class Greeter {
+	    public String sayHello() {
+	        return "Hello world!";
+	    }
+	}
+
+-----------------------
+
+#cd /opt/maven/hello
+
+#vi pom.xml
+
+---------------------------------------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>com.hpe.project-group</groupId>
+   <artifactId>Helloworld</artifactId>
+   <version>1.0</version>
+    <packaging>jar</packaging>
+        <dependencies>
+                <dependency>
+                        <groupId>joda-time</groupId>
+                        <artifactId>joda-time</artifactId>
+                        <version>2.2</version>
+                </dependency>
+        </dependencies>
+
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <configuration>
+                <archive>
+                  <manifest>
+                    <mainClass>org.joda.time.LocalTime</mainClass>
+                  </manifest>
+                </archive>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+
+                </descriptorRefs>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+</project>
+--------------------------------------------------------------------
+
+#mvn clean compile assembly:single
+#java -cp target/Helloworld-1.0-jar-with-dependencies.jar hello.HelloWorld
+
+2:How to include custom library into maven local repository?
+------------------------------------------------------------
+#mvn install:install-file -Dfile=Helloworld-1.0-jar-with-dependencies.jar -DgroupId=com.google.code 
+-DartifactId=helloworld -Dversion=1 -Dpackaging=jar
+
+->After that we can add to any pom.xml as dependency.
