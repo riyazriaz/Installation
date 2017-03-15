@@ -1,0 +1,191 @@
+
+
+Jfrog Installation
+=====================
+
+jfrog ports : 8081
+server port : 8015
+
+
+Jfrog Home directory : /opt/software/jfrog/artifactory-oss-4.5.0
+
+1. useradd jfrog
+2.  passwd jfrog
+
+3.chown -R jfrog:jfrog /opt/software/jfrog
+4.chown -R jfrog:jfrog /opt/software/jfrog/*
+
+
+5.cd /opt/software/jfrog/artifactory-oss-4.5.0/bin
+
+open artifactory.default file 
+
+
+=======================================================================
+export ARTIFACTORY_HOME=/opt/software/jfrog/artifactory-oss-5.1.3
+export ARTIFACTORY_USER=jfrog
+
+export TOMCAT_HOME=$ARTIFACTORY_HOME/tomcat
+export JAVA_HOME=/usr/java/jdk1.8.0_121
+export ARTIFACTORY_PID=$ARTIFACTORY_HOME/run/artifactory.pid
+========================================================================
+
+
+6. chmod 755 *
+
+7. ./installService.sh jfrog
+
+8. service artifactory check for status, start, stop
+ 
+9. If you are not getting the Interface .. do a stop and start of the service 
+
+
+10. then you can access jfrog interface using 
+
+http://IP:8081/artifactory
+
+
+default credentials
+===================
+
+1. username = admin
+2. password = password
+
+
+
+
+Integrating Jfrog With MySQL
+===============================
+
+1. Add and edit the file opt/software/jfrog/artifactory-oss-4.5.0/etc/my.cnf
+
+
+export max_allowed_packet=8M
+export innodb_buffer_pool_size=1536M
+export tmp_table_size=512M
+export max_heap_table_size=512M
+export innodb_log_file_size=256M
+export innodb_log_buffer_size=4M
+
+
+Save and exit the file 
+
+
+2.cp -r /opt/software/jfrog/artifactory-oss-4.5.0/misc/db/mysql.properties /opt/software/jfrog/artifactory-oss-4.5.0/etc/storage.properties
+
+
+3.cp -r /opt/atlassian/jira/lib/mysql-connector-java-5.1.40-bin.jar opt/software/jfrog/artifactory-oss-4.5.0/tomcat/lib/
+
+
+
+
+4.MySQL Database configuration
+=============================
+5.CREATE DATABASE artdb CHARACTER SET utf8 COLLATE utf8_bin;
+	use artdb;
+6.create user artifactory;
+
+
+	GRANT ALL PRIVILEGES ON artdb.* to artifactory@127.0.0.1 identified by 'Admin@123';
+	GRANT ALL PRIVILEGES ON artdb.* to artifactory@IP identified by 'Admin@123';
+	GRANT ALL PRIVILEGES ON artdb.* to artifactory@hostname identified by 'Admin@123';
+	GRANT ALL PRIVILEGES ON artdb.* to artifactory@localhost identified by 'Admin@123';
+
+7.flush privileges;
+
+8.exit;
+
+9. Change parameters in /opt/software/jfrog/artifactory-oss-4.5.0/etc/storage.properties
+
+eg:
+
+==================================
+
+type=mysql
+driver=com.mysql.jdbc.Driver
+url=jdbc:mysql://172.16.234.132:3306/artdb?characterEncoding=UTF-8&elideSetAutoCommits=true
+username=artifactory
+password=Admin@123
+
+====================================
+
+Install Artifactory Plugins in Jenkins
+=======================================
+
+1. Artifactory Plugin
+2.Deployment Dashboard Plugin for Jenkins
+
+
+
+
+Jfrog--Maven Integration
+=========================
+
+Generate settings.xml
+
+================
+
+
+
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd" xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <servers>
+    <server>
+      <username>${security.getCurrentUsername()}</username>
+      <password>${security.getEscapedEncryptedPassword()!"*** Insert encrypted password here ***"}</password>
+      <id>central</id>
+    </server>
+    <server>
+      <username>${security.getCurrentUsername()}</username>
+      <password>${security.getEscapedEncryptedPassword()!"*** Insert encrypted password here ***"}</password>
+      <id>snapshots</id>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>central</id>
+          <name>libs-release</name>
+          <url>http://172.16.234.132:8081/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>libs-snapshot</name>
+          <url>http://172.16.234.132:8081/artifactory/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>central</id>
+          <name>plugins-release</name>
+          <url>http://172.16.234.132:8081/artifactory/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>plugins-snapshot</name>
+          <url>http://172.16.234.132:8081/artifactory/plugins-snapshot</url>
+        </pluginRepository>
+      </pluginRepositories>
+      <id>artifactory</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+  </activeProfiles>
+</settings>
+
+==============================
+
+
