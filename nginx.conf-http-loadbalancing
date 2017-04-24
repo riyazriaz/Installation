@@ -1,0 +1,18 @@
+user nobody;
+worker_processes 1;
+events {
+	worker_connections 1024;
+}
+http {
+	upstream servers {
+		server 172.16.234.137:8080;
+		server 172.16.234.135:8080;
+	}
+server {
+	listen 80;
+	location /
+		{
+			proxy_pass http://servers;
+		}
+	}
+}
