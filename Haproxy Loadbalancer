@@ -1,0 +1,35 @@
+HAproxy Loadbalancing
+----------------------
+
+yum -y install haproxy
+
+cd /etc/haproxy/
+mv haproxy.cfg haproxy.cfg.org
+
+Use the configuration file from Git Installation Directory
+
+Next, configure rsyslog for HAProxy.
+
+We will configure the rsyslog daemon to log the HAProxy statistics. Edit the rsyslog.conf file to enable the UDP port 514 to be used by rsyslog.
+
+vi /etc/rsyslog.conf
+
+Uncomment this line to enable the UDP connection:
+
+$ModLoad imudp
+$UDPServerRun 514
+
+
+Then create new haproxy configuration file for rsyslog:
+--------------------------------------------------------
+cd /etc/rsyslog.d/
+vi haproxy.conf
+
+local2.=info     /var/log/haproxy-access.log    #For Access Log
+local2.notice    /var/log/haproxy-info.log      #For Service Info - Backend, loadbalancer
+
+systemctl restart rsyslog
+systemctl start haproxy
+
+systemctl enable haproxy
+
