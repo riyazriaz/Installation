@@ -5,7 +5,7 @@ Installing Nagios server in centos 7
 
 yum install php
 
-yum install httpd*
+yum install httpd
 
 This section will cover how to install Nagios 4 on your monitoring server. You only need to complete this section once.
 
@@ -29,7 +29,7 @@ Install Nagios Core
 
 Extract the Nagios archive with this command:
 
-#tar xzf nagios-4.1.1.tar.gz
+tar -xzf nagios-4.1.1.tar.gz
 
 cd nagios-4.1.1.
 
