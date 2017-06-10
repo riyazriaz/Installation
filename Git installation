@@ -1,0 +1,43 @@
+Installation of GIT
+=====================
+
+check whether java is installed or not
+
+yum install curl curl-devel
+
+yum groupinstall "Development Tools"
+
+yum install gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel
+
+go to github page and download latest git source code
+
+https://github.com/git/git/releases
+
+wget link
+
+mv v2.12.0-rc0.tar.gz to /opt/software/.
+
+rename the v2.12.0-rc0.tar.gz to git-2.12.tar.gz
+
+untar it using the command
+
+tar -xzf git-2.12.tar.gz
+
+cd git-*
+
+make configure
+
+./configure --prefix=/usr/local
+
+ make install
+
+
+git --version
+
+
+git config --global user.name "your Name"
+git config --global user.mail "you@example.com"
+
+
+git config --list
+
